@@ -1,0 +1,11 @@
+# This docker-compose file will use the Dockerfile(s) of the speficied services/apps to first build them
+# because it has "build: ." directive
+version: "2"
+services:
+  app:
+    build: .
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+    ports:
+      - 8080:8080
