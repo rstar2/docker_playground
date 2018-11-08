@@ -12,10 +12,6 @@ ENV NODE_ENV=production
 # access the ARG variable PORT and set/elevate it as an env variable
 ENV PORT $PORT
 
-# application's default port
-# only these ports the Docker container is listening to, only they are exposed
-RUN echo 'HTTP server will listen by default on' $PORT
-
 # Make port available to the world outside this container
 EXPOSE $PORT
 
@@ -31,6 +27,9 @@ RUN npm install
 # note - COPY will ignore files from the .dockerignore files , like node_modules
 COPY . .
 
+# application's default port
+# only these ports the Docker container is listening to, only they are exposed
+RUN echo 'HTTP server will listen by default on' $PORT
 
 # only one CMD instuction can be in a Dockerfile
 CMD npm start
