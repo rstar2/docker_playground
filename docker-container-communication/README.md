@@ -55,7 +55,7 @@ $ sudo docker build -t my-cc-app nodeapp/
 ```
 - Create and start a container from it
 ```
-$ sudo docker run -d -p:3000:5000 --link my-cc-mongo-1:mongodb --env MONGODB_URL=mongodb  --name my-cc-app-1 my-cc-app
+$ sudo docker run -d -p:3000:5000 --link my-cc-mongo-1:mongodb --env MONGO_URL=mongodb --env MONGO_DB=docker-my-cc --name my-cc-app-1 my-cc-app
 ```
 Here the container's local port 5000 (on which the NodeJS server is listening) is mapped to the port 3000 on the host machine
 
