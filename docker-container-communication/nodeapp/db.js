@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
-const MONGODB_URL = process.env.MONGODB_URL || 'localhost';
-mongoose.connect(`mongodb://${MONGODB_URL}/docker-my-cc`, { useNewUrlParser: true });
+const MONGO_URL = process.env.MONGO_URL || 'localhost';
+const MONGO_DB = process.env.MONGO_DB || '';
+mongoose.connect(`mongodb://${MONGO_URL}/${MONGO_DB}`, { useNewUrlParser: true });
 
 const userSchema = new mongoose.Schema({
     name: String

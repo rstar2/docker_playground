@@ -10,9 +10,8 @@ FROM mongo
 # specify the name of a database to be used for creation scripts
 ENV MONGO_INITDB_DATABASE docker-my-cc
 
-# TODO: initialize a DB
+# initialize the DB
 COPY docker-entrypoint-initdb.d /docker-entrypoint-initdb.d/
-
 
 RUN echo 'Start mongo listening on port' 27017
 

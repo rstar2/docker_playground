@@ -31,6 +31,11 @@ COPY . .
 # only these ports the Docker container is listening to, only they are exposed
 RUN echo 'HTTP server will listen by default on' $PORT
 
+# Normally this ocntainer is made to work with another Mongo one
+ENV MONGO_URL mongodb
+# the DB to use (this should be the same DB that is initialized in the Mongo container)
+ENV MONGO_DB docker-my-cc
+
 # only one CMD instuction can be in a Dockerfile
-CMD npm start
+CMD ["npm", "start"]
 
