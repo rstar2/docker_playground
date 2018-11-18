@@ -1,0 +1,17 @@
+{
+  "name": "dockerized-chromium-remote-debugging",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Rumen Neshev <rstardev@abv.bg>",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer-core": "^1.10.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5"
+  }
+}
