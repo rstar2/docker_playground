@@ -13,5 +13,7 @@ $ docker build . -t <docker_hub_username>/<image_name>
     ```
 
 # 3. Push to a Docker container repository hub
+TODO
 
 # 4. Configure Kubernetes
+TODO

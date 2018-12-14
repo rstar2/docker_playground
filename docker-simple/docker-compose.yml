@@ -1,6 +1,6 @@
 # This docker-compose file will use the compose/build from ground-up, not using Dockerfile
 # there' no "build: ." directive
-version: "2"
+version: '3.6'
 services:
   app:
     image: node:10
@@ -12,10 +12,9 @@ services:
       - .:/app
     ports:
       - 8080:8080
-    
+
     # if the mounted the current folder has 'node_modules' inside
     command: "npm start"
 
     # if we mount just the source and want to 'npm install' in the container itself
     # command: bash -c "npm install && npm start"
-    

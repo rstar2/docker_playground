@@ -1,6 +1,6 @@
 # This docker-compose file will use the Dockerfile(s) of the speficied services/apps to first build them
 # because it has "build: ." directive
-version: "2"
+version: '3.6'
 services:
   app:
     build: .
