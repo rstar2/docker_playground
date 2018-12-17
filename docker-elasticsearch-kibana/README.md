@@ -28,5 +28,7 @@ $ docker run -d --name kibana --net elasticnet -p 5601:5601 kibana:6.5.3
  ``` -v full_path_to/custom_kibana.yml:/usr/share/kibana/config/kibana.yml ```
 
 
-# Using docker-compose.yml
-> TODO - Check the docker-compose.yml
+# Using docker-compose.yml:
+``` $ docker-compose up ```
+
+Note : for Windows in order PWD to work it must be set like this: ``` $ set PWD=%cd% ```

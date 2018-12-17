@@ -31,3 +31,4 @@ https://blog.shahinrostami.com/2017/11/docker-toolbox-windows-7-shared-volumes/
    ```
    will allow sharing data in "D:\DockerVolume"
 
+4. In order the PWD env variable to work it must be set like this: ```$ set PWD=%cd%```
