@@ -115,3 +115,63 @@ POST /_xpack/sql?format=txt
   "query": "SELECT * FROM pages"
 }
 ```
+
+
+## ------------- AGGREGATION  -----------------
+
+
+## ------------- GEO Search  -----------------
+
+### First  proper mappings for a GEO coordinates must be provided
+
+#### get the mapping (schema) that ElasticSearch inferred and applied when not explicitly provided any
+GET /restourants/_mapping/_doc
+
+# set it manually - but first recreate it
+```json
+DELETE /restourants
+```
+```json
+PUT /restourants
+```
+```json
+PUT /restourants/_mapping/_doc
+{
+  ....
+}
+```
+
+## Other CRUD operations
+
+#### get a document
+```json
+GET /pages/_doc/CREATED_IN_FRONT_ID
+```
+
+#### complete update/replace
+```json
+POST /pages/_doc/CREATED_IN_FRONT_ID
+{
+  "url": 56,
+  "replaced": "yes"
+}
+```
+
+# partial update - updating existing props or adding new props
+```json
+POST /pages/_doc/CREATED_IN_FRONT_ID/_update
+{
+  "doc": {
+    "url": 5555,
+    "new_value": "new data"
+
+  }
+}
+```
+
+# delete a document
+```json
+DELETE /pages/_doc/CREATED_IN_FRONT_ID
+```
+
+## ---- Analyzers - Tokenization and Token Filters -----
