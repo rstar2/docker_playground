@@ -7,7 +7,20 @@ DELETE /pages
 
 ## ---------- CREATE -------------
 
-#### create a document in the "pages" index (create the index first if not existing) - the new document's ID (e.g. "_id") is created by ElasticSearch
+#### create a "pages" index
+```json
+POUT /pages
+{
+  "settings": {
+      "index.number_of_shards": 1,
+      "index.number_of_replicas": 0
+  },
+  "analysis": {
+  }
+}
+```
+
+#### create a document in the "pages" index (create the index first if not existing) - the new document's ID (e.g. "_id") is created by ElasticSearch. Note the document type in the index we named *_doc* but this is irrelevant, it can be anything, still each index support only one document type (the whole notion of types in an index is deprecated since 6.0. and will be removed soon)
 ```json
 POST /pages/_doc
 {
@@ -44,7 +57,8 @@ POST /pages/_doc
 }
 ```
 
-#### create a document in the "pages" index (create the index first if not existing) - the new document's ID (e.g. "_id") is created by ElasticSearch
+#### create a document in the "pages" index (create the index first if not existing) - the new document's ID (e.g. "_id") is passed as CREATED_IN_FRONT_ID
+
 ```json
 PUT /pages/_doc/CREATED_IN_FRONT_ID
 {
