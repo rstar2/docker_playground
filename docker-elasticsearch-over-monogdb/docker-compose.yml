@@ -71,6 +71,7 @@ services:
 
   nginx:
     image: nginx:latest
+    container_name: elasticsearch-mongodb--nginx
     ports:
         - 8080:80
     volumes:
