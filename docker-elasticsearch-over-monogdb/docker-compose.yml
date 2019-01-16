@@ -38,6 +38,7 @@ services:
       ELASTICSEARCH_URL: http://elasticsearch-mongodb--es:9200/
       SERVER_NAME: elasticsearch-mongodb--kibana
       SERVER_BASEPATH: /kibana
+      SERVER_REWRITEBASEPATH: 'true'
     ports:
       - 5601:5601
     ulimits:
