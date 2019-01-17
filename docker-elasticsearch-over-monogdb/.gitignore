@@ -1,2 +1,5 @@
 # ElasticSearch data
 elasticsearch/data
+
+# MongoDB data
+mongodb/data

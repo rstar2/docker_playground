@@ -57,15 +57,23 @@ services:
         window: 120s
 
   mongodb:
-    image: mongo:latest
+    image: mongo:4
     container_name: elasticsearch-mongodb--mongodb
+    restart: always
     environment:
       MONGO_INITDB_DATABASE: website
     ports:
       - 27017:27017
-    # TODO:
-    # # initialize the DB
-    # COPY mongodb/initdb.d /docker-entrypoint-initdb.d/
+    # command: --smallfiles
+    volumes:
+      # mount the MongoDB data and longs file
+      - ${PWD}/mongodb/data:/data
+      # initialize the DB - these files in /docker-entrypoint-initdb.d will be executed the first time the container is started
+      # this is similat to 'COPY mongodb/initdb.d /docker-entrypoint-initdb.d/' if placed in Dockerfile
+      - type: bind
+        read_only: true
+        source: ${PWD}/mongodb/initdb.d
+        target: /docker-entrypoint-initdb.d/
 
   mongo-express:
     image: mongo-express
@@ -81,8 +89,17 @@ services:
       ME_CONFIG_SITE_BASEURL: /mongoadmin
 
   # TODO:
-  # client:
-  #   image: node:10
+  client:
+    image: node:10
+    container_name: elasticsearch-mongodb--clientapp
+    restart: always
+    environment:
+      #          mongodb://user:password@hostname:port/defaultDatabase?config
+      MONGO_URL: mongodb://elasticsearch-mongodb--mongodb/website
+      # set this if the client server app is to be accessed behind a reverse-proxy as in the Nginx setup
+      SITE_BASEURL: /client
+    expose:
+      - 3000
 
   nginx:
     image: nginx:latest
