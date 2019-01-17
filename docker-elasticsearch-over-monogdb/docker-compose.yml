@@ -88,18 +88,21 @@ services:
       # set this if MongoExpress is to be accessed behind a reverse-proxy as in the Nginx setup
       ME_CONFIG_SITE_BASEURL: /mongoadmin
 
-  # TODO:
-  client:
-    image: node:10
-    container_name: elasticsearch-mongodb--clientapp
-    restart: always
+  app:
+    build: ./app
+    container_name: elasticsearch-mongodb--app
     environment:
       #          mongodb://user:password@hostname:port/defaultDatabase?config
-      MONGO_URL: mongodb://elasticsearch-mongodb--mongodb/website
+      MONGO_URL: "mongodb://elasticsearch-mongodb--mongodb:27017/website"
       # set this if the client server app is to be accessed behind a reverse-proxy as in the Nginx setup
-      SITE_BASEURL: /client
-    expose:
-      - 3000
+      SITE_BASEURL: /app
+      PORT: 3000
+      NODE_ENV: development
+    ports:
+      # map the NodeJS-debugger/inspector port
+      - 9229:9229
+    # run in developemnt mode (use together with env-var NODE_ENV=development)
+    command: "npm run start:dev"
 
   nginx:
     image: nginx:latest

@@ -14,7 +14,26 @@ db.articles.insert({
     content: 'In the most recent example in a growing trend of big deals for smartphone-based games, a consortium of Chinese investors led by the game company Shanghai Giant Network Technology said in a statement on Saturday that it would pay $4.4 billion to Caesars Interactive Entertainment for Playtika, its social and mobile games unit. Caesars Interactive is controlled by the owners of Caesars Palace and other casinos in Las Vegas and elsewhere.'
 });
 
+// create a text index https://docs.mongodb.com/manual/core/index-text/
+// that will be used when searching for text - in BOTH 'title' and 'content' fields
 db.articles.createIndex({
     title: 'text',
     content: 'text'
 });
+
+// MongoDB Text Indexes Restrictions:
+// 1. A collection can have at most one text index.
+// 2. Sort operations cannot obtain sort order from a text index, even from a compound text index; i.e. sort operations cannot use the ordering in the text index.
+// 3. text indexes only support simple binary comparison and do not support collation.
+//    To create a text index on a a collection that has a non-simple collation, you must explicitly specify {collation: {locale: "simple"} } when creating the index.
+// 4. text indexes can be large.
+// 5. text indexes will impact insertion throughput because MongoDB must add an index entry for each unique post-stemmed word in each indexed field of each new source document.
+// 6. Partial search is not possible
+
+// So MongoDB will use this index when searching for text in the 'title' and 'content' (not different weights can be specified for each field)
+//  db.articles.find( { $text: { $search: "chinese" } } )
+// will find one document
+
+// Note!!! Partial search is not possible though
+//  db.articles.find( { $text: { $search: "chi" } } )
+// will not find anything
