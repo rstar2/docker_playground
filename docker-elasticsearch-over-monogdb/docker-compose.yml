@@ -55,6 +55,9 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+    # This dependancy is not necessary to be specified but it's descriptive and good to know
+    depends_on:
+      - elasticsearch
 
   mongodb:
     image: mongo:4
@@ -87,6 +90,10 @@ services:
       # ME_CONFIG_MONGODB_ADMINPASSWORD: password
       # set this if MongoExpress is to be accessed behind a reverse-proxy as in the Nginx setup
       ME_CONFIG_SITE_BASEURL: /mongoadmin
+    # This dependancy is not necessary to be specified but it's descriptive and good to know
+    # The 'mongo-express' app is build such that it can hanlde resilently conncection errors
+    depends_on:
+      - mongodb
 
   app:
     build: ./app
@@ -101,8 +108,17 @@ services:
     ports:
       # map the NodeJS-debugger/inspector port
       - 9229:9229
+    depends_on:
+      - mongodb
     # run in developemnt mode (use together with env-var NODE_ENV=development)
     command: "npm run start:dev"
+    # 1. One way to ensure the MongoDB service is running is to fix the app to be error-resilent and
+    #    to try reconnecting. This is better as MongoDb can fail at any time, not just on startup
+    # 2. Easier solution is to use a wait script that will check and wait for proper "connection"
+    #    before calling the dependant container's start commond
+    # TODO: use the 'wait-for-mongo.sh' or a common 'wait-for-it.sh' script
+    # to check when the MongoDb service is really up
+    # command: ["./wait-for-it.sh", "elasticsearch-mongodb--mongodb:27017", "--", "npm run start:dev"]
 
   nginx:
     image: nginx:latest
