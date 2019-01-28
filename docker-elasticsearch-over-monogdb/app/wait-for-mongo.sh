@@ -1,16 +1,24 @@
 #!/bin/sh
-# wait-for-postgres.sh
+
+# TODO: nc is not found when started from docker-compose
+
+# USAGE Example:
+# $ wait-for-mongo.sh elasticsearch-mongodb--mongodb 27017 -- npm run start:dev
 
 set -e
 
 host="$1"
-shift
+port="$2"
+
+shift 3
+
 cmd="$@"
 
-until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$host" -U "postgres" -c '\q'; do
-  >&2 echo "Postgres is unavailable - sleeping"
+until nc -z $host $port
+do
+  >&2 echo "Mongo is unavailable - sleeping"
   sleep 1
 done
 
->&2 echo "Postgres is up - executing command"
+>&2 echo "Mongo is up - executing command"
 exec $cmd
