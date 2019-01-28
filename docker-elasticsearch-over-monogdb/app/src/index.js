@@ -1,92 +1,45 @@
-const http = require('http');
-const querystring = require('querystring');
+const path = require('path');
+
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 const db = require('./db');
 
-const parseQueryMiddleware = (req, res, next) => {
-    const splits = req.url.split('?');
-    const query = splits[1] || '';
-    req.query = querystring.parse(query);
-    next();
-};
-
-const dbMiddleware = (req, res, next) => {
-    const uid = req.query.uid;
-    if (uid) {
-        console.log(`Getting user for ${uid}`);
-        db.getUser(uid)
-            .then(user => user || Promise.reject(`No user with uid ${uid}`))
-            .then(({ name }) => {
-                console.log(`User name for ${uid} is ${name}`);
-                req.query.name = name;
-                next();
-            })
-            .catch((error) => {
-                req.error = error;
-                next();
-            });
+app.use('/api/user/:uid?', (req, res) => {
+    if (req.params.uid) {
+        db.getUser(req.params.uid)
+            .then(({ name }) => res.send(`Hello ${name}`))
+            .catch(error => res.status(500).send(`Getting user ${req.params.uid} failed`));
     } else {
         db.getUsers()
-            .then(users => {
-                req.query.users = users;
-                next();
-            })
-            .catch((error) => {
-                req.error = error;
-                next();
-            });
+            .then(users => res.send(`Found ${users.length} users`))
+            .catch(error => res.status(500).send('Getting users failed'));
     }
-};
+});
 
-const handleMiddleware = (req, res) => {
-    if (req.error) {
-        res.statusCode = 500;
-        res.setHeader('Content-Type', 'text/plain');
-        res.write('' + req.error); // should write a string
-    } else {
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        if (req.query.uid) {
-            res.write(`Hello ${req.query.name || 'Anonymous'}`);
-        } else {
-            res.write(`List users ${req.query.users.join()}`);
-        }
-    }
-
-    res.end();
-};
-
-// simple middlewares framework
-const createHandler = (middlewares) => {
-    if (false === Array.isArray(middlewares)) {
-        middlewares = [middlewares];
-    }
-
-    const execMiddleware = (req, res, count) => {
-        const middleware = middlewares[count];
-        console.log(`Handling middleware ${count}`);
-
-        middleware(req, res, count < middlewares.length - 1 ? () => {
-            execMiddleware(req, res, (count + 1));
-        } : () => {
-            console.log('Skipping next middlewares');
+app.use('/api/article/search', (req, res) => {
+    const q = req.query.q;
+    db.searchArticles(q)
+        .then(articles => res.json(articles))
+        .catch(error => {
+            console.error(error);
+            res.status(500).send(`Searching for ${q} failed`);
         });
 
-        if (count === middlewares.length - 1) {
-            console.log('Handled all middlewares');
-        }
-    };
-
-    return (req, res) => {
-        console.log('Handle request');
-        execMiddleware(req, res, 0);
-    };
-};
+});
+app.use('/api/article/:id', (req, res) => {
+    db.getArticle(req.params.id)
+        .then(({ title }) => res.send(`Title: ${title}`))
+        .catch(error => res.status(500).send(`Getting user ${req.params.id} failed`));
+});
 
 const port = process.env.PORT || 3000;
-http.createServer(createHandler([
-    parseQueryMiddleware,
-    dbMiddleware,
-    handleMiddleware]))
-    .listen(port, () => {
-        console.log(`HTTP server listening on port ${port}`);
-    });
+app.listen(port || 3000, function () {
+    console.log('Express server listening on port ' + port);
+});
