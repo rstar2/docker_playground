@@ -134,6 +134,7 @@ services:
     command: /bin/bash -c "nginx -g 'daemon off;'"
     ulimits:
       nproc: 65535
+    # specify so that the needed hosts (as upstreams) could be available on Nginx startup
     depends_on:
       - kibana
       - mongo-express

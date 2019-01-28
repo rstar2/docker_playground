@@ -8,28 +8,6 @@ db.on('error', console.error.bind(console, `DB connection error ${MONGO_URL}:`))
 db.once('open', console.log.bind(console, 'DB connected'));
 
 
-const userSchema = new mongoose.Schema({
-    name: String
-});
-const User = mongoose.model('User', userSchema);
-
-/**
- * @param {String} uid
- * @return {Promise<{id:String,name:String}>}
- */
-exports.getUser = async (id) => {
-    return User.findById(id).exec();
-};
-
-
-/**
- * @param {String} uid
- * @return {Promise<{id:String,name:String}[]>}
- */
-exports.getUsers = async () => {
-    return User.find({}).exec();
-};
-
 const articleSchema = new mongoose.Schema({
     title: String,
     content: String,
@@ -48,9 +26,16 @@ exports.getArticle = async (id) => {
     return Article.findById(id).exec();
 };
 
-
 /**
  * @param {String} uid
+ * @return {Promise<{id:String,title:String,content:String}[]>}
+ */
+exports.getUsers = async () => {
+    return Article.find({}).exec();
+};
+
+/**
+ * @param {String} q
  * @return {Promise<{id:String,title:String,content:String}[]>}
  */
 exports.searchArticles = async (q) => {
