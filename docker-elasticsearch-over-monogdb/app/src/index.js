@@ -3,16 +3,27 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const app = express();
-
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
 const db = require('./db');
 const elastic = require('./elasticsearch');
 
-app.use('/api/article/:id?', (req, res) => {
+const app = express();
+
+let route;
+const SITE_BASEURL = process.env.SITE_BASEURL;
+if (SITE_BASEURL) {
+    route = new express.Router();
+    app.use(SITE_BASEURL, route);
+} else {
+    route = app;
+}
+
+route.use(express.static(path.join(__dirname, 'public')));
+
+route.use('/api', bodyParser.urlencoded({ extended: false }));
+route.use('/api', bodyParser.json());
+
+// demo MongoDB access
+route.use('/api/article/:id?', (req, res) => {
     if (req.params.id) {
         db.getArticle(req.params.id)
             .then(({ title }) => res.send(`Title: ${title}`))
@@ -31,7 +42,7 @@ app.use('/api/article/:id?', (req, res) => {
 });
 
 // MongoDB search
-app.use('/api/article/search', (req, res) => {
+route.use('/api/article/mongodbsearch', (req, res) => {
     const q = req.query.q;
     db.searchArticles(q)
         .then(articles => res.json(articles))
@@ -42,7 +53,7 @@ app.use('/api/article/search', (req, res) => {
 });
 
 // ElasticSearch search
-app.use('/api/article/elasticseach', (req, res) => {
+route.use('/api/article/elasticsearch', (req, res) => {
     const q = req.query.q;
     elastic.searchArticles(q)
         .then(articles => res.json(articles))
@@ -52,8 +63,14 @@ app.use('/api/article/elasticseach', (req, res) => {
         });
 });
 
+route.use((req, res) => {
+    console.error(`Not handled path ${req.path}`);
+    res.send(`Not handled path ${req.path}`);
+});
+
+
 const port = process.env.PORT || 3000;
 app.listen(port || 3000, () => {
-    console.log('Express server listening on port ' + port);
+    console.log(`Express server listening on port ${port} and base-path: ${SITE_BASEURL}`);
 });
 
