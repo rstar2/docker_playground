@@ -30,6 +30,20 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
+    # TODO: Allow setting up ElasticSearch when it starts
+    # COPY docker-entrypoint.sh /docker-entrypoint.sh
+    # COPY config/elasticsearch.yml config/elasticsearch.yml
+    # COPY config/setup.sh config/setup.sh
+    # RUN mkdir utils
+    # COPY utils/wait-for-it.sh utils/wait-for-it.sh
+
+    # USER root
+    # RUN chmod +x /docker-entrypoint.sh utils/wait-for-it.sh config/setup.sh
+    # RUN chown -R elasticsearch:elasticsearch /docker-entrypoint.sh utils/wait-for-it.sh config/setup.sh
+
+    # USER elasticsearch
+    # ENTRYPOINT ["/docker-entrypoint.sh"]
+    # CMD ["/usr/share/elasticsearch/bin/elasticsearch"]
 
   kibana:
     image: docker.elastic.co/kibana/kibana:6.5.3
@@ -60,7 +74,7 @@ services:
       - elasticsearch
 
   mongodb:
-    image: mongo:4
+    image: mongo:4.0
     container_name: elasticsearch-mongodb--mongodb
     restart: always
     environment:

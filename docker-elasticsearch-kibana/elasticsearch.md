@@ -141,7 +141,7 @@ POST /_xpack/sql?format=txt
 #### get the mapping (schema) that ElasticSearch inferred and applied when not explicitly provided any
 GET /restourants/_mapping/_doc
 
-# set it manually - but first recreate it
+#### set it manually - but first recreate it
 ```json
 DELETE /restourants
 ```
@@ -171,7 +171,7 @@ POST /pages/_doc/CREATED_IN_FRONT_ID
 }
 ```
 
-# partial update - updating existing props or adding new props
+#### partial update - updating existing props or adding new props
 ```json
 POST /pages/_doc/CREATED_IN_FRONT_ID/_update
 {
@@ -183,9 +183,28 @@ POST /pages/_doc/CREATED_IN_FRONT_ID/_update
 }
 ```
 
-# delete a document
+#### delete a document
 ```json
 DELETE /pages/_doc/CREATED_IN_FRONT_ID
 ```
 
 ## ---- Analyzers - Tokenization and Token Filters -----
+
+
+## ---- Indices API ----
+
+#### Get Index
+
+```json
+GET /indexName
+```
+
+####Exist index - returns "200 - OK" or "404 - Not Found"
+```string
+HEAD /indexName
+```
+
+#### Create
+```json
+PUT /indexName
+```
