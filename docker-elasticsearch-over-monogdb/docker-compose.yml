@@ -1,7 +1,8 @@
 version: '3.6'
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.3
+    # image: docker.elastic.co/elasticsearch/elasticsearch:6.5.3
+    build: ./elasticsearch
     container_name: elasticsearch-mongodb--es
     environment:
       - discovery.type=single-node
@@ -30,20 +31,6 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
-    # TODO: Allow setting up ElasticSearch when it starts
-    # COPY docker-entrypoint.sh /docker-entrypoint.sh
-    # COPY config/elasticsearch.yml config/elasticsearch.yml
-    # COPY config/setup.sh config/setup.sh
-    # RUN mkdir utils
-    # COPY utils/wait-for-it.sh utils/wait-for-it.sh
-
-    # USER root
-    # RUN chmod +x /docker-entrypoint.sh utils/wait-for-it.sh config/setup.sh
-    # RUN chown -R elasticsearch:elasticsearch /docker-entrypoint.sh utils/wait-for-it.sh config/setup.sh
-
-    # USER elasticsearch
-    # ENTRYPOINT ["/docker-entrypoint.sh"]
-    # CMD ["/usr/share/elasticsearch/bin/elasticsearch"]
 
   kibana:
     image: docker.elastic.co/kibana/kibana:6.5.3
