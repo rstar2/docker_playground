@@ -20,5 +20,18 @@
         }
       }
     }
+  },
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "title": {
+          "type": "text",
+          "analyzer": "autocomplete"
+        },
+        "content": {
+          "type": "text"
+        }
+      }
+    }
   }
 }
