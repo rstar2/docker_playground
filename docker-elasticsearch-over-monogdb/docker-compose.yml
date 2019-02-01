@@ -69,9 +69,8 @@ services:
       MONGO_INITDB_DATABASE: website
     ports:
       - 27017:27017
-    # expose:
-    #   - 27017
-    # command: --smallfiles
+    # TODO: Run as Replica set in order the Mongo-Connector to be used to transfer data to ElasticSearch
+    # command: --replSet rs0
     volumes:
       # mount the MongoDB data and longs file
       - ${PWD}/mongodb/data:/data
@@ -99,16 +98,18 @@ services:
     depends_on:
       - mongodb
 
-  # mongo-connector:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:6.5.3
-  #   build: .
-  #     https://github.com/yougov/mongo-connector
-  #     - pip install 'mongo-connector[elastic5]'
-  #   container_name: elasticsearch-mongodb--connector
-  #   command: "python mongo_connector.py -m elasticsearch-mongodb--mongodb:27217 -t elasticsearch-mongodb--es:9200"
-  #   depends_on:
-  #     - mongodb
-  #     - elasticsearch
+  # TODO: not ready yet
+  # To test it '$ docker-compose run --entrypoint /bin/bash mongo-connector' or
+  # '$ docker-compose run --entrypoint "" mongo-connector bash'
+  mongo-connector:
+    build: ./mongodb-connector
+    container_name: elasticsearch-mongodb--connector
+    environment:
+      MONGO: elasticsearch-mongodb--mongodb:27017
+      ELASTICSEARCH: elasticsearch-mongodb--es:9200
+    depends_on:
+      - mongodb
+      - elasticsearch
 
 
   app:
