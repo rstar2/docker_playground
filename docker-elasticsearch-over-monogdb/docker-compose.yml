@@ -5,6 +5,7 @@ services:
     build: ./elasticsearch
     container_name: elasticsearch-mongodb--es
     environment:
+      # Needed for Development mode
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
@@ -97,6 +98,18 @@ services:
     # The 'mongo-express' app is build such that it can hanlde resilently conncection errors
     depends_on:
       - mongodb
+
+  # mongo-connector:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:6.5.3
+  #   build: .
+  #     https://github.com/yougov/mongo-connector
+  #     - pip install 'mongo-connector[elastic5]'
+  #   container_name: elasticsearch-mongodb--connector
+  #   command: "python mongo_connector.py -m elasticsearch-mongodb--mongodb:27217 -t elasticsearch-mongodb--es:9200"
+  #   depends_on:
+  #     - mongodb
+  #     - elasticsearch
+
 
   app:
     build: ./app

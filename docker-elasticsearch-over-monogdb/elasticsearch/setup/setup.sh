@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-echo Initiating Elasticsearch
+echo "ElasticSearch setup script"
 # move to the directory of this setup script
 cd $(dirname "$0")
 
@@ -12,7 +12,7 @@ cd $(dirname "$0")
 elasticsearh_ip=${ELASTICSEARCH_IP:-"localhost"}
 elasticsearh_port=${ELASTICSEARCH_PORT:-"9200"}
 elasticsearch_url=http://$elasticsearh_ip:$elasticsearh_port
-echo Elasticsearch is accessible on: ${elasticsearch_url}
+echo "Elasticsearch is accessible on: ${elasticsearch_url}"
 
 # check if required index is already existing and if not the create it
 # -s --> silien, no progress
@@ -22,15 +22,15 @@ exists=$(curl --head -s -o /dev/null -w %{http_code} ${elasticsearch_url}/websit
 # This should return just the status code - 200 means (index exists)
 
 if (($exists != 200)); then
-    echo Creating and configuring the 'website_opt' index
+    echo "Creating and configuring the 'website_opt' index"
 
     # create a new index with the settings in index_website_opt.json
     curl -X PUT ${elasticsearch_url}/website_opt \
         -H 'Content-Type: application/json' \
         -d @index_website_opt.json
 
-    echo Created and configured the 'website_opt' index
+    echo "Created and configured the 'website_opt' index"
 else
-    echo Already created 'website_opt' index
+    echo "Already created 'website_opt' index"
 fi
 
