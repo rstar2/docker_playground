@@ -69,8 +69,9 @@ services:
       MONGO_INITDB_DATABASE: website
     ports:
       - 27017:27017
-    # TODO: Run as Replica set in order the Mongo-Connector to be used to transfer data to ElasticSearch
-    # command: --replSet rs0
+    # Run as Replica set in order the Mongo-Connector to be used to transfer data to ElasticSearch
+    # This means that the replica set has to be intiated from a script - this is done in 01-init.js
+    command: --replSet rs0
     volumes:
       # mount the MongoDB data and longs file
       - ${PWD}/mongodb/data:/data
@@ -101,16 +102,15 @@ services:
   # TODO: not ready yet
   # To test it '$ docker-compose run --entrypoint /bin/bash mongo-connector' or
   # '$ docker-compose run --entrypoint "" mongo-connector bash'
-  mongo-connector:
-    build: ./mongodb-connector
-    container_name: elasticsearch-mongodb--connector
-    environment:
-      MONGO: elasticsearch-mongodb--mongodb:27017
-      ELASTICSEARCH: elasticsearch-mongodb--es:9200
-    depends_on:
-      - mongodb
-      - elasticsearch
-
+  # mongo-connector:
+  #   build: ./mongodb-connector
+  #   container_name: elasticsearch-mongodb--connector
+  #   environment:
+  #     MONGO: elasticsearch-mongodb--mongodb:27017
+  #     ELASTICSEARCH: elasticsearch-mongodb--es:9200
+  #   depends_on:
+  #     - mongodb
+  #     - elasticsearch
 
   app:
     build: ./app
