@@ -10,15 +10,15 @@ if (!MONGO_RS_HOST) {
 print('ReplicaSet host: ' + MONGO_RS_HOST);
 
 // Initiate the Replica Set
-rs.initiate();
-//rs.initiate({
-//    _id: 'rs0',
-//    members: [{
-//        _id: 0,
-//
-//        // access it from the passed environment variable
-//        host: MONGO_RS_HOST
-//    }]
-//});
+//rs.initiate();
+rs.initiate({
+    _id: 'rs0',
+    members: [{
+        _id: 0,
+
+        // access it from the passed environment variable
+        host: MONGO_RS_HOST
+    }]
+});
 
 print('===== End: ReplicaSet initiate =====');

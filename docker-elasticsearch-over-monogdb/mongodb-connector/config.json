@@ -1,0 +1,15 @@
+{
+  "verbosity": 3,
+  "namespaces": {
+    "website.articles": "website_opt._doc",
+    "__comment": "export the MongoDB 'website' database collection 'articles' to the ElasticSearch 'website' index with the single allowed '_doc' document type",
+
+    "__filtered_renamed_database.*": {
+      "rename": "new_filtered_database.*",
+      "includeFields": ["included_field", "included.nested.field"]
+    },
+    "__db.filtered_collection2": {
+      "excludeFields": ["excluded_field", "excluded.nested.field"]
+    }
+  }
+}

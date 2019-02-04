@@ -6,6 +6,6 @@ ENV TZ UTC
 RUN apt-get update && apt-get install -y mongodb-clients
 RUN pip install 'mongo-connector[elastic5]'
 
-COPY docker-entrypoint.sh .
+COPY . .
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
