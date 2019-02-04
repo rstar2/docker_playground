@@ -111,7 +111,6 @@ services:
       - mongodb
 
   # TODO: again start the container's main job when MongoDB and ElasticSearch are normally running
-  # TODO: check real-time mongo data updates (e.g. inserting new articles)
   # To test it '$ docker-compose run --entrypoint /bin/bash mongo-connector' or
   # '$ docker-compose run --entrypoint "" mongo-connector bash'
   mongo-connector:
@@ -130,6 +129,7 @@ services:
     environment:
       #          mongodb://user:password@hostname:port/defaultDatabase?config
       MONGO_URL: "mongodb://elasticsearch-mongodb--mongodb:27017/website"
+      ELASTICSEARCH_URL: "http://elasticsearch-mongodb--es:9200"
       # set this if the client server app is to be accessed behind a reverse-proxy as in the Nginx setup
       SITE_BASEURL: /app
       PORT: 3000
