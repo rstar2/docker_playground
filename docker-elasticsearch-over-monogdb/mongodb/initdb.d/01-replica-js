@@ -1,0 +1,24 @@
+/* global rs, print, MONGO_RS_HOST:true */
+
+
+print('===== Start: ReplicaSet initiate =====');
+
+if (!MONGO_RS_HOST) {
+    MONGO_RS_HOST = '127.0.0.1:27017';
+}
+
+print('ReplicaSet host: ' + MONGO_RS_HOST);
+
+// Initiate the Replica Set
+//rs.initiate();
+rs.initiate({
+    _id: 'rs0',
+    members: [{
+        _id: 0,
+
+        // access it from the passed environment variable
+        host: MONGO_RS_HOST
+    }]
+})
+
+print('===== End: ReplicaSet initiate =====');
