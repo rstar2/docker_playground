@@ -73,6 +73,8 @@ services:
       # Otherwise the ReplicaSet initiate with set it to 127.0.0.1:27017
       # so it will not be accessible form outside this container
       MONGO_RS_HOST: elasticsearch-mongodb--mongodb:27017
+    # again because of the ReplicaSet configuration - this will
+    hostname: elasticsearch-mongodb--mongodb
     ports:
       - 27017:27017
     # Run as Replica set in order the Mongo-Connector to be used to transfer data to ElasticSearch
@@ -110,15 +112,15 @@ services:
   # TODO: check real-time mongo data updates (e.g. inserting new articles)
   # To test it '$ docker-compose run --entrypoint /bin/bash mongo-connector' or
   # '$ docker-compose run --entrypoint "" mongo-connector bash'
-  mongo-connector:
-    build: ./mongodb-connector
-    container_name: elasticsearch-mongodb--connector
-    environment:
-      MONGO: elasticsearch-mongodb--mongodb:27017
-      ELASTICSEARCH: elasticsearch-mongodb--es:9200
-    depends_on:
-      - mongodb
-      - elasticsearch
+  # mongo-connector:
+  #   build: ./mongodb-connector
+  #   container_name: elasticsearch-mongodb--connector
+  #   environment:
+  #     MONGO: elasticsearch-mongodb--mongodb:27017
+  #     ELASTICSEARCH: elasticsearch-mongodb--es:9200
+  #   depends_on:
+  #     - mongodb
+  #     - elasticsearch
 
   app:
     build: ./app
