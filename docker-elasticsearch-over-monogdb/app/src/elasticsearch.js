@@ -18,10 +18,10 @@ client.ping({
     requestTimeout: 1000
 }, (error) => {
     if (error) {
-        console.trace('elasticsearch cluster is down!');
+        console.trace('ElasticSearch cluster is down!');
     } else {
         isConnected = true;
-        console.log('All is well');
+        console.log('ElasticSearch cluster is up and running');
     }
 });
 
@@ -36,19 +36,36 @@ exports.searchArticles = async (q) => {
     if (!isConnected)
         throw new Error('ElasticSearch is still to ready');
 
-
-    // TODO: https://scotch.io/tutorials/build-a-real-time-search-engine-with-node-vue-and-elasticsearch
     const response = await client.search({
-        index: 'twitter',
-        type: 'tweets',
+        index: 'website_opt',
+        // this is an 'article' document type (ElasticSearch 6 support now only one type per index) - an d can be skipped
+        // type: '_doc',
         body: {
+            size: 200,
+            from: 0,
             query: {
                 match: {
-                    body: 'elasticsearch'
+                    // search in the 'title' field for the 'q' query-string
+                    // title: q,
+
+                    // use the "standard" analyzer, otherwise it would use the custom
+                    // "autocomplete" analyser by default and query using the edge n-grams of the query text.
+                    // This would lead to unwanted results, since we want to search
+                    // for the text (for example) "Yahoo" specifically, and not for "y", or "ya" or "yah" or "yaho" and "yahoo".
+                    title: {
+                        query: q,
+                        analyzer: 'standard',
+                    }
                 }
             }
         }
     });
 
-    return response;
+    // this is [ {_id, _index, _type, _score, _source}, ... ]
+    const hits = response.hits.hits;
+
+    // get just the source articles
+    const articles = hits.map(obj => obj._source);
+
+    return articles;
 };

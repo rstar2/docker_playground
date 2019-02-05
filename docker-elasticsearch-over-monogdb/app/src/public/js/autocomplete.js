@@ -1,25 +1,32 @@
-(function (global, Rx) {
+(function (Rx) {
 
-    const limit = 20;
+    function main(wrapperId) {
+        const $searchWrapper = document.getElementById(wrapperId);
+        // get from the HTML data attribute - e.g the 'data-search-url="..."' - return a string
+        const apiSearchUrl = $searchWrapper.dataset.searchUrl; //
 
-    // Search Wikipedia for a given term
-    function searchWikipedia(term) {
-        return fetch(`https://en.wikipedia.org/w/api.php?origin=*&action=query&list=search&prop=info&inprop=url&utf8=&format=json&srlimit=${limit}&srsearch=${term}`)
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(err => Promise.reject(err));
-                }
-                return res;
-            })
-            .then(res => res.json())
-            .then(res => res.query.search);
-    }
+        // TODO: pass this from the server, but currently it's just a static file.
+        // Will have to use Express view-templates
+        const apiBasePath ='http://localhost:8080/app'; // Linux Docker
+        // const apiBasePath ='http://192.168.99.100:8080/app'; // Windows Docker
+        // const apiBasePath ='http://localhost:3000'; // just the app locally
 
-    function main() {
-        const $input = document.getElementById('textInput'),
-            $results = document.getElementById('results');
+        function apiSearch(term) {
+            return fetch(`${apiBasePath}${apiSearchUrl}?q=${term}`)
+                .then(res => {
+                    if (!res.ok) {
+                        return res.json().then(err => Promise.reject(err));
+                    }
+                    return res;
+                })
+                .then(res => res.json())
+                .then(res => res.data.articles);
+        }
 
-        // Get all distinct key up events from the input 
+        const $input = $searchWrapper.getElementsByClassName('textInput')[0],
+            $results = $searchWrapper.getElementsByClassName('results')[0];
+
+        // Get all distinct key up events from the input
         const keyup$ = Rx.Observable.fromEvent($input, 'keyup');
 
         // only fire if long enough and distinct
@@ -29,18 +36,18 @@
             .debounceTime(750) // Pause for 750ms
             .distinctUntilChanged(); // Only if the value has changed
 
-        const searcher$ = keyupNeeded$.switchMap(searchWikipedia);
+        const searcher$ = keyupNeeded$.switchMap(apiSearch);
 
         searcher$.subscribe(data => {
             console.log('data', data);
 
             $results.innerHTML = '';
-            
+
             data.forEach(result => {
                 const $result = document.createElement('li');
                 $result.innerText = result['title'];  // jshint ignore:line
                 // result['snippet'], result['pageid']
-                
+
                 $results.appendChild($result);
             });
         }, error => {
@@ -54,6 +61,7 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', main);
+    document.addEventListener('DOMContentLoaded', main.bind(null, 'mongodb'));
+    document.addEventListener('DOMContentLoaded', main.bind(null, 'elasticsearch'));
 
-}(window, Rx));
+}(Rx));

@@ -12,15 +12,28 @@
 
 <body>
     <div class="container">
-        <h1>RxJS Autocomplete search</h1>
+        <h1>Autocomplete search - (RxJS over MongoDB or ElasticSearch)</h1>
 
-        <div class="row">
-            <label for="textInput">Enter Query for Wikipedia</label>
-            <input type="text" id="textInput" class="form-control" placeholder="Enter Query...">
+        <div id="mongodb" data-search-url="/api/article/mongodbsearch">
+            <div class="row">
+                <label for="textInput">Enter Query for MongoDb search</label>
+                <input type="text" class="textInput" placeholder="Enter Query...">
+            </div>
+
+            <div class="row">
+                <ul class="results"></ul>
+            </div>
         </div>
 
-        <div class="row">
-            <ul id="results"></ul>
+        <div id="elasticsearch" data-search-url="/api/article/elasticsearch">
+            <div class="row">
+                <label for="textInput">Enter Query for ElasticSearch search</label>
+                <input type="text" class="textInput" placeholder="Enter Query...">
+            </div>
+
+            <div class="row">
+                <ul class="results"></ul>
+            </div>
         </div>
     </div>
 
