@@ -64,7 +64,6 @@ services:
   mongodb:
     image: mongo:4.0
     container_name: elasticsearch-mongodb--mongodb
-    restart: always
     environment:
       # the default database to use
       MONGO_INITDB_DATABASE: website
@@ -96,7 +95,6 @@ services:
   mongo-express:
     image: mongo-express
     container_name: elasticsearch-mongodb--mongoadmin
-    restart: always
     ports:
       - 8081:8081
     environment:
