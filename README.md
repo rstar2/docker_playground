@@ -1,4 +1,4 @@
-## Mounting volumes in Windows Docker Toolbox
+## Mounting volumes in Windows Docker Toolbox (e.g. fr Windows 7)
 
 1. Start Docker Quickstart Terminal
 
