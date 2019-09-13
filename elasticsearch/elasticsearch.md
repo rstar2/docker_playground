@@ -139,17 +139,17 @@ POST /_xpack/sql?format=txt
 ### First  proper mappings for a GEO coordinates must be provided
 
 #### get the mapping (schema) that ElasticSearch inferred and applied when not explicitly provided any
-GET /restourants/_mapping/_doc
+GET /restaurants/_mapping/_doc
 
 #### set it manually - but first recreate it
 ```json
-DELETE /restourants
+DELETE /restaurants
 ```
 ```json
-PUT /restourants
+PUT /restaurants
 ```
 ```json
-PUT /restourants/_mapping/_doc
+PUT /restaurants/_mapping/_doc
 {
   ....
 }

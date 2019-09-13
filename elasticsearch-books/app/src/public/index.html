@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Autocomplete-Search with RxJS</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Autocomplete search - (RxJS over MongoDB or ElasticSearch)</h1>
+
+        <div id="mongodb" data-search-url="/api/article/mongodbsearch">
+            <div class="row">
+                <label for="textInput">Enter Query for MongoDb search</label>
+                <input type="text" class="textInput" placeholder="Enter Query...">
+            </div>
+
+            <div class="row">
+                <ul class="results"></ul>
+            </div>
+        </div>
+
+        <div id="elasticsearch" data-search-url="/api/article/elasticsearch">
+            <div class="row">
+                <label for="textInput">Enter Query for ElasticSearch search</label>
+                <input type="text" class="textInput" placeholder="Enter Query...">
+            </div>
+
+            <div class="row">
+                <ul class="results"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.5.12/Rx.js"></script>
+    <script src="js/autocomplete.js"></script>
+</body>
+
+</html>

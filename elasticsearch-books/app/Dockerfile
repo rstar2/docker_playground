@@ -21,7 +21,7 @@ RUN npm install
 COPY . .
 
 # Make it executable just in case the local file while building the image is not
-RUN chmod +x wait-for-it.sh wait-for-mongo.sh docker-entrypoint.sh
+RUN chmod +x wait-for-it.sh wait-for-mongo.sh
 
 # only one CMD instuction can be in a Dockerfile
 CMD ["npm", "start"]

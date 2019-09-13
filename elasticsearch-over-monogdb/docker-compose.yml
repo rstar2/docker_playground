@@ -28,7 +28,11 @@ services:
       # Elastic runs using uid:gid elasticsearch:elasticsearch (1000:1000)
       # See https://discuss.elastic.co/t/elastic-elasticsearch-docker-not-assigning-permissions-to-data-directory-on-run/65812/2
       # See https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      # - ./elasticsearch/data:/usr/share/elasticsearch/data
+      # this is the same as the above but will throw error if the host source folder is not existing
+      - type: bind
+        source: ./elasticsearch/data
+        target: /usr/share/elasticsearch/data
     ports:
       - 9200:9200
       - 9300:9300
@@ -90,7 +94,7 @@ services:
       - type: bind
         read_only: true
         source: ./mongodb/initdb.d
-        target: /docker-entrypoint-initdb.d/
+        target: /docker-entrypoint-initdb.d
 
   mongo-express:
     image: mongo-express
@@ -108,9 +112,7 @@ services:
     depends_on:
       - mongodb
 
-  # TODO: again start the container's main job when MongoDB and ElasticSearch are normally running
-  # To test it '$ docker-compose run --entrypoint /bin/bash mongo-connector' or
-  # '$ docker-compose run --entrypoint "" mongo-connector bash'
+  # The Mongo-connector waits insided for the proper services to be normally running
   mongo-connector:
     build: ./mongodb-connector
     container_name: elasticsearch-mongodb--connector
@@ -137,17 +139,17 @@ services:
       - 9229:9229
     depends_on:
       - mongodb
-    # run in developemnt mode (use together with env-var NODE_ENV=development)
+      - elasticsearch
+    # run in developement mode https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html (use together with env-var NODE_ENV=development)
     # command: "npm run start:dev"
     # 1. One way to ensure the MongoDB service is running is to fix the app to be error-resilent and
     #    to try reconnecting. This is better as MongoDb can fail at any time, not just on startup
     # 2. Easier solution is to use a wait script that will check and wait for proper "connection"
     #    before calling the dependant container's start commond
     # use a common 'wait-for-it.sh' script (or if needed a specific 'wait-for-mongo.sh')
-    # to check when the MongoDb service is really up
-    command: ["./wait-for-it.sh", "elasticsearch-mongodb--mongodb:27017", "--", "npm", "run", "start:dev"]
-    # TODO: - FIX 'wait-for-mongo.sh'
-    # command: ["./wait-for-mongo.sh", "elasticsearch-mongodb--mongodb", "27017", "--", "npm", "run", "start:dev"]
+    # to check when the MongoDB service is really up
+    # command: ["./wait-for-it.sh", "elasticsearch-mongodb--mongodb:27017", "--", "npm", "run", "start:dev"]
+    entrypoint: ["./docker-entrypoint.sh"]
 
   nginx:
     image: nginx:latest
