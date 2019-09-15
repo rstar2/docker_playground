@@ -22,7 +22,7 @@ services:
         max_attempts: 3
         window: 120s
     volumes:
-      - ${PWD}/elasticsearch/data:/usr/share/elasticsearch/data
+      - elasticdata:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
       - 9300:9300
@@ -65,6 +65,9 @@ services:
       nproc: 65535
     networks:
       - elasticnet
+
+volumes:
+  elasticdata:
 
 networks:
   elasticnet:
