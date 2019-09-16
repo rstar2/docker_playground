@@ -9,7 +9,7 @@ DELETE /pages
 
 #### create a "pages" index
 ```json
-POUT /pages
+PUT /pages
 {
   "settings": {
       "index.number_of_shards": 1,

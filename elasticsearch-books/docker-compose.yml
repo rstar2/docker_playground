@@ -35,6 +35,8 @@ services:
     environment:
       SERVER_NAME: kibana
       ELASTICSEARCH_URL: http://elasticsearch:9200/
+      SERVER_BASEPATH: /kibana
+      SERVER_REWRITEBASEPATH: 'true'
     ports:
       - 5601:5601
     ulimits:
@@ -54,8 +56,36 @@ services:
     networks:
       - elasticnet
 
+  client:
+    build: ./app
+    container_name: client
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      # set this if the client server app is to be accessed behind a reverse-proxy as in the Nginx setup
+      SITE_BASEURL: /client
+      PORT: 3000
+      NODE_ENV: development
+    ports:
+      # map the NodeJS-debugger/inspector port
+      - 9229:9229
+    depends_on:
+      - elasticsearch
+    networks:
+      - elasticnet
+    # run in developement mode https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html (use together with env-var NODE_ENV=development)
+    # command: "npm run start:dev"
+    # 1. One way to ensure the MongoDB service is running is to fix the app to be error-resilent and
+    #    to try reconnecting. This is better as MongoDb can fail at any time, not just on startup
+    # 2. Easier solution is to use a wait script that will check and wait for proper "connection"
+    #    before calling the dependant container's start commond
+    # use a common 'wait-for-it.sh' script (or if needed a specific 'wait-for-mongo.sh')
+    # to check when the MongoDB service is really up
+    command: ["./wait-for-it.sh", "elasticsearch:9200", "--", "npm", "run", "start:dev"]
+    # entrypoint: ["./docker-entrypoint.sh"]
+
   nginx:
     image: nginx:latest
+    container_name: nginx
     ports:
         - 8080:80
     volumes:
@@ -63,6 +93,9 @@ services:
     command: /bin/bash -c "nginx -g 'daemon off;'"
     ulimits:
       nproc: 65535
+    depends_on:
+      - kibana
+      - client
     networks:
       - elasticnet
 
