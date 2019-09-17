@@ -7,9 +7,9 @@
 
         // TODO: pass this from the server, but currently it's just a static file.
         // Will have to use Express view-templates
-        const apiBasePath ='http://localhost:8080/app'; // Linux Docker
-        // const apiBasePath ='http://192.168.99.100:8080/app'; // Windows Docker
-        // const apiBasePath ='http://localhost:3000'; // just the app locally
+        const apiBasePath ='http://localhost:8080/client'; // Linux Docker
+        // const apiBasePath ='http://192.168.99.100:8080/client'; // Windows Docker
+        // const apiBasePath ='http://localhost:3000/client'; // just the app locally
 
         function apiSearch(term) {
             return fetch(`${apiBasePath}${apiSearchUrl}?q=${term}`)
@@ -45,8 +45,7 @@
 
             data.forEach(result => {
                 const $result = document.createElement('li');
-                $result.innerText = result['title'];  // jshint ignore:line
-                // result['snippet'], result['pageid']
+                $result.innerText = `URL: ${result['url']}, TEXT: ${result['text']}`;  // jshint ignore:line
 
                 $results.appendChild($result);
             });
@@ -61,7 +60,6 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', main.bind(null, 'mongodb'));
     document.addEventListener('DOMContentLoaded', main.bind(null, 'elasticsearch'));
 
 }(Rx));

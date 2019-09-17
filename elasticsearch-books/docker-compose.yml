@@ -56,15 +56,18 @@ services:
     networks:
       - elasticnet
 
+  # configure a self-restaring NodeJS app (using bound local volume and 'nodemon' inside for restarting the app on changes)
   client:
-    build: ./app
+    image: node:10
     container_name: client
     environment:
-      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_INDEX_NAME: pages
       # set this if the client server app is to be accessed behind a reverse-proxy as in the Nginx setup
       SITE_BASEURL: /client
       PORT: 3000
       NODE_ENV: development
+      NPM_CONFIG_LOGLEVEL: info
     ports:
       # map the NodeJS-debugger/inspector port
       - 9229:9229
@@ -72,6 +75,9 @@ services:
       - elasticsearch
     networks:
       - elasticnet
+    volumes:
+      - ./app:/usr/share/app
+    working_dir: /usr/share/app
     # run in developement mode https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html (use together with env-var NODE_ENV=development)
     # command: "npm run start:dev"
     # 1. One way to ensure the MongoDB service is running is to fix the app to be error-resilent and
@@ -81,7 +87,6 @@ services:
     # use a common 'wait-for-it.sh' script (or if needed a specific 'wait-for-mongo.sh')
     # to check when the MongoDB service is really up
     command: ["./wait-for-it.sh", "elasticsearch:9200", "--", "npm", "run", "start:dev"]
-    # entrypoint: ["./docker-entrypoint.sh"]
 
   nginx:
     image: nginx:latest
