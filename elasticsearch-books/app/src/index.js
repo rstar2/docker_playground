@@ -22,10 +22,10 @@ route.use('/api', bodyParser.urlencoded({ extended: false }));
 route.use('/api', bodyParser.json());
 
 // ElasticSearch search
-route.use('/api/article/elasticsearch', (req, res) => {
+route.use('/api/search', (req, res) => {
     const q = req.query.q;
-    elastic.searchArticles(q)
-        .then(articles => res.json({data: {articles}}))
+    elastic.searchBooks(q)
+        .then(books => res.json({data: {books}}))
         .catch(error => {
             console.error(error);
             res.status(500).send(`Searching with ElasticSearch for ${q} failed`);

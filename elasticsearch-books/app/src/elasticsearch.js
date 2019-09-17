@@ -32,7 +32,7 @@ client.ping({
  * @param {String} q
  * @return {Promise<{id:String,title:String,content:String}[]>}
  */
-exports.searchArticles = async (q) => {
+exports.searchBooks = async (q) => {
     // TODO: could queue the task for when client is connected in real production app
     if (!isConnected)
         throw new Error('ElasticSearch is still not ready');
@@ -69,7 +69,7 @@ exports.searchArticles = async (q) => {
     const hits = response.hits.hits;
 
     // get just the source articles
-    const articles = hits.map(obj => obj._source);
+    const sources = hits.map(obj => obj._source);
 
-    return articles;
+    return sources;
 };

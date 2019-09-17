@@ -12,7 +12,7 @@
         // const apiBasePath ='http://localhost:3000/client'; // just the app locally
 
         function apiSearch(term) {
-            return fetch(`${apiBasePath}${apiSearchUrl}?q=${term}`)
+            return fetch(`${apiBasePath}/api/search?q=${term}`)
                 .then(res => {
                     if (!res.ok) {
                         return res.json().then(err => Promise.reject(err));
@@ -20,7 +20,7 @@
                     return res;
                 })
                 .then(res => res.json())
-                .then(res => res.data.articles);
+                .then(res => res.data.books);
         }
 
         const $input = $searchWrapper.getElementsByClassName('textInput')[0],
