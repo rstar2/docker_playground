@@ -1,31 +1,30 @@
-const elasticsearch = require('elasticsearch');
+const elasticsearch = require('@elastic/elasticsearch');
 const URL = process.env.ELASTICSEARCH_URL;
 const INDEX = process.env.ELASTICSEARCH_INDEX_NAME  || 'index';
 
 // instantiate an Elasticsearch client
 const client = new elasticsearch.Client({
-    // hosts: [ELASTICSEARCH_URL], // if connecting to a cluster
-    host: URL,
+    // nodes: [URL], // if connecting to a cluster
+    node: URL,
     log: 'trace',
+    pingTimeout: 1000,
+    requestTimeout: 1000,
+    maxRetries: 3
 });
-
 
 // the way this application is currently started assumes that the ElasticSearch server
 // is already properly running and accessible,
 // but still a "queued actions" technique can be used if needed (similar is in the Mongoose wrapper)
 let isConnected = false;
-client.ping({
-    // ping usually has a 3000ms timeout
-    requestTimeout: 1000
-}, (error) => {
+console.log('ElasticSearch pinging');
+client.ping((error) => {
     if (error) {
-        console.trace('ElasticSearch cluster is down!');
+        console.trace('ElasticSearch is down!');
     } else {
         isConnected = true;
-        console.log('ElasticSearch cluster is up and running');
+        console.log('ElasticSearch is up and running');
     }
 });
-
 
 
 /**
@@ -34,8 +33,8 @@ client.ping({
  */
 exports.searchBooks = async (q) => {
     // TODO: could queue the task for when client is connected in real production app
-    if (!isConnected)
-        throw new Error('ElasticSearch is still not ready');
+    // if (!isConnected)
+    //     throw new Error('ElasticSearch is still not ready');
 
     const response = await client.search({
         index: INDEX,
@@ -65,8 +64,13 @@ exports.searchBooks = async (q) => {
         }
     });
 
+    // ''response' is { statusCode, headers, body, warnings, meta }
+    // 'body' = { took, timeout, _shards, hits }
+    // and the real found items are in the 'hits' = { total, max_score, hits },
+    // so 'response.body.hits.hits'
+
     // this is [ {_id, _index, _type, _score, _source}, ... ]
-    const hits = response.hits.hits;
+    const hits = response.body.hits.hits;
 
     // get just the source articles
     const sources = hits.map(obj => obj._source);

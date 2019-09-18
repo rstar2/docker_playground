@@ -20,7 +20,8 @@
                     return res;
                 })
                 .then(res => res.json())
-                .then(res => res.data.books);
+                .then(res => res.data.books)
+                .catch(() => []);
         }
 
         const $input = $searchWrapper.getElementsByClassName('textInput')[0],
