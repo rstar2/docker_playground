@@ -12,24 +12,32 @@ const client = new elasticsearch.Client({
     maxRetries: 3
 });
 
-// the way this application is currently started assumes that the ElasticSearch server
-// is already properly running and accessible,
-// but still a "queued actions" technique can be used if needed (similar is in the Mongoose wrapper)
-let isConnected = false;
-console.log('ElasticSearch pinging');
-client.ping((error) => {
-    if (error) {
-        console.trace('ElasticSearch is down!');
-    } else {
-        isConnected = true;
-        console.log('ElasticSearch is up and running');
-    }
-});
+async function run() {
+    // the way this application is currently started assumes that the ElasticSearch server
+    // is already properly running and accessible,
+    // but still a "queued actions" technique can be used if needed (similar is in the Mongoose wrapper)
+    let isConnected = false;
+    console.log('ElasticSearch pinging');
+    client.ping((error) => {
+        if (error) {
+            console.trace('ElasticSearch is down!');
+        } else {
+            isConnected = true;
+            console.log('ElasticSearch is up and running');
+        }
+    });
+
+    // TODO: create the index now if not already created
+}
+
+// run now
+run().catch(console.error);
 
 
 /**
+ * Search
  * @param {String} q
- * @return {Promise<{id:String,title:String,content:String}[]>}
+ * @return {Promise<{title:String, content:String}[]>}
  */
 exports.searchBooks = async (q) => {
     // TODO: could queue the task for when client is connected in real production app
@@ -77,3 +85,14 @@ exports.searchBooks = async (q) => {
 
     return sources;
 };
+
+/**
+ * Add new
+ * @param {String} title
+ * @param {String} content
+ * @return {Promise}
+ */
+exports.addBook = async (title, content) => {
+
+};
+
