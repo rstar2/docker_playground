@@ -2,17 +2,9 @@
 
     function main(wrapperId) {
         const $searchWrapper = document.getElementById(wrapperId);
-        // get from the HTML data attribute - e.g the 'data-search-url="..."' - return a string
-        const apiSearchUrl = $searchWrapper.dataset.searchUrl; //
-
-        // TODO: pass this from the server, but currently it's just a static file.
-        // Will have to use Express view-templates
-        const apiBasePath ='http://localhost:8080/client'; // Linux Docker
-        // const apiBasePath ='http://192.168.99.100:8080/client'; // Windows Docker
-        // const apiBasePath ='http://localhost:3000/client'; // just the app locally
 
         function apiSearch(term) {
-            return fetch(`${apiBasePath}/api/search?q=${term}`)
+            return fetch(`api/search?q=${term}`)
                 .then(res => {
                     if (!res.ok) {
                         return res.json().then(err => Promise.reject(err));
@@ -21,7 +13,7 @@
                 })
                 .then(res => res.json())
                 .then(res => res.data.books)
-                .catch(() => []);
+                .catch(() => []); // make failed requests return empty results
         }
 
         const $input = $searchWrapper.getElementsByClassName('textInput')[0],

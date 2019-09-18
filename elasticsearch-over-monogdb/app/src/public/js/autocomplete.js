@@ -5,14 +5,8 @@
         // get from the HTML data attribute - e.g the 'data-search-url="..."' - return a string
         const apiSearchUrl = $searchWrapper.dataset.searchUrl; //
 
-        // TODO: pass this from the server, but currently it's just a static file.
-        // Will have to use Express view-templates
-        const apiBasePath ='http://localhost:8080/app'; // Linux Docker
-        // const apiBasePath ='http://192.168.99.100:8080/app'; // Windows Docker
-        // const apiBasePath ='http://localhost:3000'; // just the app locally
-
         function apiSearch(term) {
-            return fetch(`${apiBasePath}${apiSearchUrl}?q=${term}`)
+            return fetch(`${apiSearchUrl}?q=${term}`)
                 .then(res => {
                     if (!res.ok) {
                         return res.json().then(err => Promise.reject(err));
