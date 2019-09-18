@@ -1,6 +1,7 @@
 # Things to do
 
-- Add real books data using plain REST
+- Allow adding data to ElasticSearch
+  - on starting the app check if index is created and if not create it with the necessary properties and analyzers
+  - implement add of new book (e.g. upload) from the app
 - Fix creation of the ElasticSearch index (books) with the necessary analyzers and properties (boost for title and etc)
-- Allow adding of new book from the client - e.g. upload and let NodeJS put it in ElasticSearch
 - ~~Update the ElasticSearch NodeJS client~~
