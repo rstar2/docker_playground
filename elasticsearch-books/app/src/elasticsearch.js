@@ -6,32 +6,108 @@ const INDEX = process.env.ELASTICSEARCH_INDEX_NAME  || 'index';
 const client = new elasticsearch.Client({
     // nodes: [URL], // if connecting to a cluster
     node: URL,
-    log: 'trace',
     pingTimeout: 1000,
-    requestTimeout: 1000,
+    requestTimeout: 5000,
     maxRetries: 3
 });
 
-async function run() {
-    // the way this application is currently started assumes that the ElasticSearch server
-    // is already properly running and accessible,
-    // but still a "queued actions" technique can be used if needed (similar is in the Mongoose wrapper)
-    let isConnected = false;
-    console.log('ElasticSearch pinging');
-    client.ping((error) => {
-        if (error) {
-            console.trace('ElasticSearch is down!');
-        } else {
-            isConnected = true;
-            console.log('ElasticSearch is up and running');
-        }
-    });
+let isConnected = true;
 
-    // TODO: create the index now if not already created
+/**
+ * @function checkConnection
+ * @returns {Promise<Boolean>}
+ * @description Checks if the client is connected to ElasticSearch
+ */
+async function checkConnection(timeout = 15000) {
+    const connect$ = new Promise(async (resolve) => {
+        console.log('Checking connection to ElasticSearch...');
+        let isConnected = false;
+        while (!isConnected) {
+            try {
+                await client.cluster.health({});
+                console.log('Successfully connected to ElasticSearch');
+                isConnected = true;
+                // eslint-disable-next-line no-empty
+            } catch (_) {
+            }
+        }
+        resolve(true);
+    });
+    const timeout$ = new Promise((_, reject) => setTimeout(reject, timeout));
+
+    return Promise.race([connect$, timeout$]);
 }
 
-// run now
+async function run() {
+    try {
+        await checkConnection();
+        console.log('ElasticSearch server is up and running');
+
+        // create the index now if not already created
+        const { body: exists } = await client.indices.exists({
+            index: INDEX
+        });
+
+        if (!exists) {
+            console.log(`Index ${INDEX} - not existing so create it now`);
+
+            await client.indices.create({
+                index: INDEX,
+                timeout: '5000ms',
+                // timeout: '5s',
+                body: {
+                }
+            });
+
+            console.log(`Index ${INDEX} - created`);
+
+            console.log(`Index ${INDEX} - create mappings`);
+            // the document swill be {title:String, contents:Sting}
+            const schema = {
+                title: {
+                    type: 'text'
+                },
+                contents: {
+                    type: 'text'
+                }
+            };
+
+            await client.indices.putMapping({
+                index: INDEX,
+                body: {
+                    properties: schema
+                }
+            });
+
+            console.log(`Index ${INDEX} - mappings created`);
+
+            await addBook({ title: 'Title demo 1', contents: 'Contents demo 1'});
+            console.log(`Index ${INDEX} - added demo data`);
+        } else {
+            console.log(`Index ${INDEX} is already existing`);
+        }
+    } catch (err) {
+        console.error(err);
+
+        isConnected = false;
+    }
+}
+
+// run now ElasticSearch initialization code
 run().catch(console.error);
+
+
+async function addBook(book, refresh = true) {
+    await client.index({
+        index: INDEX,
+        body: book,
+
+        // if 'refresh === true' we are forcing an index refresh,
+        // otherwise we will not get any result
+        // in the consequent search
+        refresh
+    });
+}
 
 
 /**
@@ -40,9 +116,8 @@ run().catch(console.error);
  * @return {Promise<{title:String, content:String}[]>}
  */
 exports.searchBooks = async (q) => {
-    // TODO: could queue the task for when client is connected in real production app
-    // if (!isConnected)
-    //     throw new Error('ElasticSearch is still not ready');
+    if (!isConnected)
+        throw new Error('ElasticSearch is still not ready');
 
     const response = await client.search({
         index: INDEX,
@@ -92,7 +167,5 @@ exports.searchBooks = async (q) => {
  * @param {String} content
  * @return {Promise}
  */
-exports.addBook = async (title, content) => {
-
-};
+exports.addBook = addBook;
 
