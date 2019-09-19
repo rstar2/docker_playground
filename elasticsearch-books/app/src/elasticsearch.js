@@ -109,6 +109,16 @@ async function addBook(book, refresh = true) {
     });
 }
 
+/**
+ * Must be called after indexing new documents, if they are added without explicit 'refresh'.
+ * This is useful to be used after multiple adding.
+ */
+async function refreshIndex() {
+    // here we are forcing an index refresh, otherwise we will not
+    // get any result in the consequent search
+    return client.indices.refresh({ index: INDEX });
+}
+
 
 /**
  * Search
@@ -121,8 +131,6 @@ exports.searchBooks = async (q) => {
 
     const response = await client.search({
         index: INDEX,
-        // this is an 'article' document type (ElasticSearch 6 support now only one type per index) - and can be skipped
-        // type: '_doc',
         body: {
             size: 200,
             from: 0,
@@ -135,7 +143,7 @@ exports.searchBooks = async (q) => {
                     // "autocomplete" analyser by default and query using the edge n-grams of the query text.
                     // This would lead to unwanted results, since we want to search
                     // for the text (for example) "Yahoo" specifically, and not for "y", or "ya" or "yah" or "yaho" and "yahoo".
-                    text: {
+                    title: {
                         query: q,
                         analyzer: 'standard',
 
@@ -144,7 +152,12 @@ exports.searchBooks = async (q) => {
                     }
                 }
             }
-        }
+        },
+
+        // this will tell ElasticSearch to return just the 'title' in the found docs
+        // there are also more specific '_source_excludes' and '_source_includes' fields if needed
+        //_source: ['title','contents','*.id'],
+        _source: 'title',
     });
 
     // ''response' is { statusCode, headers, body, warnings, meta }

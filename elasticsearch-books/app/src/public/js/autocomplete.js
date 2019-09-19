@@ -38,7 +38,7 @@
 
             data.forEach(result => {
                 const $result = document.createElement('li');
-                $result.innerText = `URL: ${result['url']}, TEXT: ${result['text']}`;  // jshint ignore:line
+                $result.innerText = `Title: ${result['title']}`;
 
                 $results.appendChild($result);
             });
