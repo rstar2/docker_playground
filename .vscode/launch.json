@@ -7,7 +7,23 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "ElasticSearch-Books-AppClient",
+      "name": "ElasticSearch-Books-AppClient-Linux",
+      "cwd": "${workspaceFolder}/elasticsearch-books/app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "debug"
+      ],
+      "port": 9229,
+      "env": {
+        "ELASTICSEARCH_URL": "http://localhost:8080/elasticsearch",
+        "ELASTICSEARCH_INDEX_NAME": "books"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "ElasticSearch-Books-AppClient-Windows",
       "cwd": "${workspaceFolder}/elasticsearch-books/app",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
@@ -17,7 +33,7 @@
       "port": 9229,
       "env": {
         "ELASTICSEARCH_URL": "http://192.168.99.100:8080/elasticsearch",
-        "ELASTICSEARCH_INDEX_NAME": "pages"
+        "ELASTICSEARCH_INDEX_NAME": "books"
       }
     },
         {

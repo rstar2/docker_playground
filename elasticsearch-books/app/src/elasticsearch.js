@@ -11,7 +11,7 @@ const client = new elasticsearch.Client({
     maxRetries: 3
 });
 
-let isConnected = true;
+let isConnected = false;
 
 /**
  * @function checkConnection
@@ -20,8 +20,7 @@ let isConnected = true;
  */
 async function checkConnection(timeout = 15000) {
     const connect$ = new Promise(async (resolve) => {
-        console.log('Checking connection to ElasticSearch...');
-        let isConnected = false;
+        console.log(`Checking connection to ElasticSearch on ${URL}...`);
         while (!isConnected) {
             try {
                 await client.cluster.health({});
@@ -33,7 +32,9 @@ async function checkConnection(timeout = 15000) {
         }
         resolve(true);
     });
-    const timeout$ = new Promise((_, reject) => setTimeout(reject, timeout));
+    const timeout$ = new Promise((_, reject) =>
+        setTimeout(reject.bind(this, new Error(`Failed connecting to ElasticSearch for ${timeout}`)),
+            timeout));
 
     return Promise.race([connect$, timeout$]);
 }
@@ -65,10 +66,13 @@ async function run() {
             // the document swill be {title:String, contents:Sting}
             const schema = {
                 title: {
-                    type: 'text'
+                    type: 'text',
+                    analyzer: 'standard',
+                    boost: 2
                 },
                 contents: {
-                    type: 'text'
+                    type: 'text',
+                    analyzer: 'english'
                 }
             };
 
@@ -131,33 +135,40 @@ exports.searchBooks = async (q) => {
 
     const response = await client.search({
         index: INDEX,
-        body: {
-            size: 200,
-            from: 0,
-            query: {
-                match: {
-                    // search in the 'text' field for the 'q' query-string
-                    // text: q
 
-                    // use the "standard" analyzer, otherwise it would use the custom
-                    // "autocomplete" analyser by default and query using the edge n-grams of the query text.
-                    // This would lead to unwanted results, since we want to search
-                    // for the text (for example) "Yahoo" specifically, and not for "y", or "ya" or "yah" or "yaho" and "yahoo".
-                    title: {
-                        query: q,
-                        analyzer: 'standard',
+        // Query in the Lucene query string syntax
+        // will search in all fields
+        q: q,
 
-                        // TODO: create such analyzer
-                        // analyzer: 'autocomplete',
-                    }
-                }
-            }
-        },
+        // body: {
+        //     // query: {
+        //     //     match: {
+        //     //         // search in the 'text' field for the 'q' query-string
+        //     //         // text: q
+
+        //     //         // use the "standard" analyzer, otherwise it would use the custom
+        //     //         // "autocomplete" analyser by default and query using the edge n-grams of the query text.
+        //     //         // This would lead to unwanted results, since we want to search
+        //     //         // for the text (for example) "Yahoo" specifically, and not for "y", or "ya" or "yah" or "yaho" and "yahoo".
+        //     //         title: {
+        //     //             query: q,
+        //     //             analyzer: 'standard',
+
+        //     //             // TODO: create such analyzer
+        //     //             // analyzer: 'autocomplete',
+        //     //         }
+        //     //     }
+        //     // }
+        // },
 
         // this will tell ElasticSearch to return just the 'title' in the found docs
         // there are also more specific '_source_excludes' and '_source_includes' fields if needed
         //_source: ['title','contents','*.id'],
         _source: 'title',
+
+        // for pagination
+        // size: 200,
+        // from: 0,
     });
 
     // ''response' is { statusCode, headers, body, warnings, meta }
