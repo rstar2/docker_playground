@@ -101,16 +101,36 @@ async function run() {
 run().catch(console.error);
 
 
-async function addBook(book, refresh = true) {
-    await client.index({
+async function addBook(body, refresh = true) {
+    const response = await client.index({
         index: INDEX,
-        body: book,
+        body,
 
         // if 'refresh === true' we are forcing an index refresh,
         // otherwise we will not get any result
         // in the consequent search
         refresh
     });
+
+    return response.body._id;
+}
+
+async function getBook(id) {
+    const response = await client.get({
+        index: INDEX,
+        id
+    });
+
+    // not found
+    if (!response.found) {
+        // return Promise.reject(new Error(`No book with id ${id}`));
+        // throw new Error(`No book with id ${id}`);
+
+        // let the caller decide how to handle the not-found response
+        return null;
+    }
+
+    return { id, ...response._source };
 }
 
 /**
@@ -141,6 +161,13 @@ exports.searchBooks = async (q) => {
         q: q,
 
         // body: {
+        //     // search in any field - I guess it's the same as just using 'q' as above, maybe a little more powerful
+        //     query_string: {
+        //         query: q
+        //         // if needed to search in the specific field, by default default_field is '*', e.g. all
+        //         // default_field: 'title'
+        //     }
+
         //     // query: {
         //     //     match: {
         //     //         // search in the 'text' field for the 'q' query-string
@@ -193,3 +220,9 @@ exports.searchBooks = async (q) => {
  */
 exports.addBook = addBook;
 
+/**
+ * Get
+ * @param {String} id
+ * @return {Promise}
+ */
+exports.getBook = getBook;

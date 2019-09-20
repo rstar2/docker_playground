@@ -12,7 +12,7 @@
                     return res;
                 })
                 .then(res => res.json())
-                .then(res => res.data.books)
+                .then(res => res.data)
                 .catch(() => []); // make failed requests return empty results
         }
 

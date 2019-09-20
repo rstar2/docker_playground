@@ -25,10 +25,33 @@ route.use('/api', bodyParser.json());
 route.use('/api/search', (req, res) => {
     const q = req.query.q;
     elastic.searchBooks(q)
-        .then(books => res.json({data: {books}}))
+        .then(books => res.json({data: books}))
         .catch(error => {
             console.error(error);
-            res.status(500).send(`Searching with ElasticSearch for ${q} failed`);
+            res.status(500).send(`Searching for ${q} failed`);
+        });
+});
+
+route.use('/api/get', (req, res) => {
+    const id = req.query.id;
+    elastic.getBook(id)
+        .then(book => {
+            if (book) res.json({data: book});
+            else res.json({error: `Not found ${id}`});
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).send(`Getting for ${id} failed`);
+        });
+});
+
+route.use('/api/add', (req, res) => {
+    const bookData = { title: req.body.title, contents: req.body.contents };
+    elastic.addBook(bookData)
+        .then(id => res.json({data: id}))
+        .catch(error => {
+            console.error(error);
+            res.status(500).send('Adding failed');
         });
 });
 
