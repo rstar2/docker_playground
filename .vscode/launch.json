@@ -4,7 +4,51 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
+    // Vue-Express-App
+
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Vue-Express-App-Client - ChromeDebug",
+      "url": "http://localhost:8080",
+      "breakOnLoad": true,
+      "webRoot": "${workspaceFolder}/vue-express-app/client/src",
+      "sourceMapPathOverrides": {
+        "webpack:///./src/*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*",
+
+        // these are optional in some cases
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*"
+      }
+    },
+    {
+      // Debug the node server directly - no need to start it in debug/inspector mode
+      "type": "node",
+      "request": "launch",
+      "name": "Vue-Express-App-Server - Local",
+      "program": "${workspaceFolder}/vue-express-app/serve-local.js",
+      "env": {
+        "WWW": "./dist"
+      }
+    },
+    {
+      // TODO: Debug the attached docker node server
+      "type": "node",
+      "request": "attach",
+      "name": "Vue-Express-App-Server - Docker Attach to Node",
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "protocol": "inspector"
+    },
+
+    // ElasticSearch-Books
+
+    {
+      // Debug the attached docker node app
       "type": "node",
       "request": "launch",
       "name": "ElasticSearch-Books-AppClient-Linux",
@@ -21,6 +65,7 @@
       }
     },
     {
+      // Debug the attached docker node app
       "type": "node",
       "request": "launch",
       "name": "ElasticSearch-Books-AppClient-Windows",
@@ -36,27 +81,41 @@
         "ELASTICSEARCH_INDEX_NAME": "books"
       }
     },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "File",
-            "program": "${file}",
-            "cwd": "${fileDirname}",
-            "envFile": "${fileDirname}/.env"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Jest",
-            "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
-            "args": [
-                "-i"
-            ],
-            "internalConsoleOptions": "openOnSessionStart",
-            "outFiles": [
-                "${workspaceRoot}/dist/**/*"
-            ],
-            // "envFile": "${workspaceRoot}/.env"
-        }
+
+    // Single opeaned file
+
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "File",
+        "program": "${file}",
+        "cwd": "${fileDirname}",
+        "envFile": "${fileDirname}/.env"
+    },
+    {
+      // Debug whichever file is open and focused
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "name": "Launch Relative File",
+      "args": ["${relativeFile}"]
+    },
+
+    // Test
+
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "Jest",
+        "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
+        "args": [
+            "-i"
+        ],
+        "internalConsoleOptions": "openOnSessionStart",
+        "outFiles": [
+            "${workspaceRoot}/dist/**/*"
+        ],
+        // "envFile": "${workspaceRoot}/.env"
+    }
     ]
 }

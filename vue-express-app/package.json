@@ -1,0 +1,24 @@
+{
+  "name": "vue-express-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client:serve": "cd client && npm run serve",
+    "client:build": "cd client && npm run build",
+    "client:lint": "cd client && npm run lint",
+    "start": "node serve.js",
+    "start:debug": "node --inspect=0.0.0.0:9229 serve.js",
+    "local": "node serve-local.js",
+    "local:debug": "npx nodemon --inspect=9229 serve-local.js",
+    "dev": "concurrently \"npm run local:debug\" \"npm run client:serve\""
+  },
+  "keywords": [],
+  "author": "Rumen Neshev <rstardev@abv.bg>",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^5.0.0",
+    "dotenv": "^8.2.0"
+  }
+}
