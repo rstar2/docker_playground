@@ -34,13 +34,16 @@
       }
     },
     {
-      // TODO: Debug the attached docker node server
+      // Debug the attached Docker node server
       "type": "node",
       "request": "attach",
       "name": "Vue-Express-App-Server - Docker Attach to Node",
       "port": 9229,
       "address": "localhost",
-      "localRoot": "${workspaceFolder}",
+      "windows": {
+        "address": "192.168.99.100"
+      },
+      "localRoot": "${workspaceFolder}/vue-express-app",
       "remoteRoot": "/usr/src/app",
       "protocol": "inspector"
     },
@@ -48,7 +51,6 @@
     // ElasticSearch-Books
 
     {
-      // Debug the attached docker node app
       "type": "node",
       "request": "launch",
       "name": "ElasticSearch-Books-AppClient-Linux",
@@ -65,7 +67,6 @@
       }
     },
     {
-      // Debug the attached docker node app
       "type": "node",
       "request": "launch",
       "name": "ElasticSearch-Books-AppClient-Windows",

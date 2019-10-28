@@ -24,6 +24,9 @@ function start() {
     app.use(bodyParser.urlencoded({extended: false}));
 
     app.use('/api', routes);
+    app.use('/api', (req, res) => {
+        res.status(500).json({error: 'Invalid "api" request'});
+    });
 
     // make anything go to the client SPA app
     app.get('*', (req, res) => {

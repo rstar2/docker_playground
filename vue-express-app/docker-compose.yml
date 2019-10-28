@@ -7,7 +7,7 @@ services:
       # build the from the Dockerfile
       context: .
       args:
-        VUE_APP_API: ${VUE_APP_API}
+        VUE_APP_API: api
     env_file:
       - .env
     ports:
