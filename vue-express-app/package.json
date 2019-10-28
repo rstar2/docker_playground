@@ -5,13 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "@comment client:serve": "For debugging only the client Vue app from VSCode",
     "client:serve": "cd client && npm run serve",
     "client:build": "cd client && npm run build",
     "client:lint": "cd client && npm run lint",
     "start": "node serve.js",
+    "@comment start:debug": "For debugging only the Node server (in production mode) from VSCode",
     "start:debug": "node --inspect=0.0.0.0:9229 serve.js",
     "local": "node serve-local.js",
+    "@comment local:debug": "For debugging only the Node server (in dev mode) from VSCode",
     "local:debug": "npx nodemon --inspect=9229 serve-local.js",
+    "@comment dev": "For debugging both the client Vue app and the Node server from VSCode",
     "dev": "concurrently \"npm run local:debug\" \"npm run client:serve\""
   },
   "keywords": [],

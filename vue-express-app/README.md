@@ -21,3 +21,10 @@ docker run -it --rm  vea-server /bin/sh
 docker build -t vea .
 docker run -it --rm  vea /bin/sh
 ```
+
+### Env variables
+
+There should be :
+
+- .env          (For production usage)
+- .env.local    (For dev/local usage)

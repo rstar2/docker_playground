@@ -13,7 +13,7 @@ function start() {
 
     const app = express();
 
-    const port = process.env.PORT || 9000;
+    const port = process.env.PORT;
     const www = process.env.WWW || './dist';
 
     // serve the client app

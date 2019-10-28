@@ -18,7 +18,7 @@ FROM node:lts-alpine as node-server
 LABEL authors="Rumen Neshev"
 WORKDIR /usr/src/app
 COPY ./server/package*.json ./server/
-RUN npm install --production --silent
+RUN cd server && npm install --production --silent
 COPY serve.js .
 COPY /server ./server/
 
