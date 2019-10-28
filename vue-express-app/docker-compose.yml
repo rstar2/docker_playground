@@ -7,6 +7,11 @@ services:
       # build the from the Dockerfile
       context: .
       args:
+        # in production both the client-app and node-server are on the same host
+        # so when building the client Vue app specify where the 'api' URL is.
+        # Note: if the image is built with the environment variable VUE_APP_API
+        # even if later in the '.env' it's different it doesn't matter any more,
+        # as it's used just at build time
         VUE_APP_API: api
     env_file:
       - .env
