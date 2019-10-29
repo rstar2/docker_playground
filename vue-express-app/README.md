@@ -1,17 +1,16 @@
 ## Testing the docker containers
 
-
 ### Testing the client app
 
 ```sh
-docker build -t vea-client -f ./DockerfileServer .
+docker build -t vea-client --target client-app .
 docker run -it --rm  vea-client /bin/sh
 ```
 
 ### Testing the server app
 
 ```sh
-docker build -t vea-server -f ./DockerfileServer .
+docker build -t vea-server --target node-server .
 docker run -it --rm  vea-server /bin/sh
 ```
 
@@ -28,3 +27,6 @@ There should be :
 
 - .env          (For production usage)
 - .env.local    (For dev/local usage)
+
+## Deploying to AWS
+
