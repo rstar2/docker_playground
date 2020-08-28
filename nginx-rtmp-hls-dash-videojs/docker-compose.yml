@@ -23,8 +23,10 @@ services:
       # - ./nginx/modules-enabled:/etc/nginx/modules-enabled
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
 
-      - ./nginx/tmp/dash:/tmp/nginx/dash
-      - ./nginx/tmp/hls:/tmp/nginx/hls
+      # if needed to just see and check the DASH/HLS chunk files
+      # /tmp/nginx/dash and /tmp/nginx/hls are where they are genetated by nginx
+      # - ./tmp/dash:/tmp/nginx/dash
+      # - ./tmp/hls:/tmp/nginx/hls
     # command: /bin/bash -c "nginx -g 'daemon off;'"
     ulimits:
       nproc: 65535
