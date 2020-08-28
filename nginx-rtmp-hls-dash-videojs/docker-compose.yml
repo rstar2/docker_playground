@@ -1,0 +1,30 @@
+version: '3.6'
+services:
+  node:
+    image: node:10
+    container_name: app
+    environment:
+      # set this if the client server app is to be accessed behind a reverse-proxy as in the Nginx setup
+      PORT: 3000
+      SITE_BASEURL: /app
+    volumes:
+      - ./app:/usr/share/app
+    working_dir: /usr/share/app
+    command: node index.js
+
+  nginx-rtmp:
+    image: tiangolo/nginx-rtmp
+    container_name: nginx-rtmp
+    ports:
+      - 9090:80    # for the Web server
+      - 1935:1935  # for the RTMP server
+    volumes:
+      # - ./nginx/conf.d:/etc/nginx/conf.d
+      # - ./nginx/modules-enabled:/etc/nginx/modules-enabled
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+
+      - ./nginx/tmp/dash:/tmp/nginx/dash
+      - ./nginx/tmp/hls:/tmp/nginx/hls
+    # command: /bin/bash -c "nginx -g 'daemon off;'"
+    ulimits:
+      nproc: 65535
